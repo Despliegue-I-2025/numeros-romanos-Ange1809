@@ -1,9 +1,10 @@
 {
-  "name": "romanos",
+  "name": "numeros-romanos",
   "version": "1.0.0",
-  "main": "romanos.js",
+  "description": "Conversor de números arábigos a romanos y viceversa.",
+  "main": "api/index.js",
   "scripts": {
-    "start": "node romanos.js",
+    "start": "node api/romanos.js",
     "test": "jest"
   },
   "dependencies": {
@@ -11,7 +12,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "supertest": "^7.1.4"
+    "supertest": "^7.1.0"
   },
   "jest": {
     "testPathIgnorePatterns": [

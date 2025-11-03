@@ -1,6 +1,6 @@
 const request = require('supertest');
 // Importa la aplicación Express y las funciones unitarias
-const { app, romanToArabic, arabicToRoman } = require('../romanos.js'); 
+const { app, romanToArabic, arabicToRoman } = require('../api/romanos.js'); 
 
 // Pruebas Unitarias para la lógica de conversión
 describe('Conversión Unitaria', () => {
