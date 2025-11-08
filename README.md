@@ -68,10 +68,10 @@ https://numeros-romanos-ange1809.vercel.app/r2a?roman=XXIV
    ```bash
    git clone <url-del-repositorio>
    cd numeros-romanos-Ange1809
-Instalar dependencias:
+# Instalar dependencias:
  ```
 npm install
-
+ ```
 
 2.Ejecutar el servidor localmente:
    ```npm start
@@ -94,30 +94,32 @@ Pasos para configurar el despliegue manual
 
 Instalar y autenticar Vercel
 
-npm install -g vercel
+ ```npm install -g vercel
 vercel login
 vercel link
-
+ ```
 
 Configurar el archivo vercel.json
 
-{
+ ```
+ {
   "version": 2,
   "builds": [{ "src": "romanos.js", "use": "@vercel/node" }],
   "routes": [{ "src": "/(.*)", "dest": "romanos.js" }]
 }
+ ```
 
-
-Desplegar
-
+# Desplegar
+ ```
 vercel --prod
-
+ ```
 
 Una vez finalizado, el sistema mostrará la URL pública del proyecto (en este caso, la final fue:
-👉 https://numeros-romanos-ange1809.vercel.app
-).
 
-🧪 Pruebas unitarias
+ https://numeros-romanos-ange1809.vercel.app
+ ).
+
+# 🧪 Pruebas unitarias
 
 Las pruebas se ejecutan con Jest y cubren los casos principales:
 
@@ -127,15 +129,17 @@ Conversión correcta de arábigos a romanos.
 
 Manejo de errores para entradas inválidas o fuera de rango.
 
-Para ejecutarlas:
-
+## Para ejecutarlas:
+ ```
 npm test
-
-🧾 Scripts útiles
+ ```
+# 🧾 Scripts útiles
+ ```
 Comando	Descripción
 npm start	Inicia el servidor local.
 npm test	Ejecuta las pruebas con Jest.
 vercel --prod	Despliega la aplicación en producción.
-🧠 Conclusión
-
-Este trabajo implementa un servicio backend funcional, validado y desplegado correctamente en Vercel, cumpliendo con todos los requisitos técnicos del proyecto final.
+ ```
+# 🧠 Conclusión
+ ```
+Este trabajo implementa un servicio backend funcional, validado y desplegado correctamente en Vercel, cumpliendo con todos los requisitos técnicos del proyecto final. ```
