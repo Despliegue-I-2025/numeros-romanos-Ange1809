@@ -1,2 +1,2 @@
-const { app } = require('./romanos');
+const { app } = require('../romanos');
 module.exports = app;

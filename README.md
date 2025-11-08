@@ -1,57 +1,140 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/gJA-GD-V)
-﻿# Tateti Random
 
-API sencilla en Node.js que devuelve un movimiento aleatorio para un tablero de ta-te-ti.
+# Conversor de Números Romanos ↔ Arábigos
+## por angelica morales- trabajo final despliegue
 
-## Requisitos previos
-- Node.js 18 o superior.
-- Cuenta en Vercel con un proyecto (puede ser creado desde el dashboard o con el comando vercel link).
-- Acceso de administrador al repositorio en GitHub para crear *secrets*.
+API desarrollada en **Node.js + Express**, que permite convertir números **romanos a arábigos y viceversa**, con validación de rango (1–3999) y respuesta en formato JSON.  
+El proyecto fue **desplegado en Vercel** y puede probarse públicamente en el siguiente enlace:
 
-## Instalacion local
-1. Clonar el repositorio y situarse en la raiz.
-2. Instalar las dependencias con `npm install`.
-3. Ejecutar la bateria de pruebas con `npm test`.
-4. Levantar el servidor local con `npm start` y consumir el endpoint `GET /move?board=[...]`.
+🔗 **[https://numeros-romanos-ange1809.vercel.app/](https://numeros-romanos-ange1809.vercel.app/)**
 
-## Despliegue continuo en Vercel
-Cada *push* a la rama `main` ejecuta el flujo definido en `.github/workflows/deploy-vercel.yml`. Este flujo instala dependencias, corre las pruebas y despliega en Vercel usando la CLI oficial. Para que funcione, sigue estos pasos una sola vez:
+---
 
-### 1. Autenticarse y vincular el proyecto en Vercel
-```bash
-npm install --global vercel    (este paso instala vecel en tu máquina)
-vercel login  (este paso pide que hagas ENTER. Con eso te abre un browser y espera a que lo autorices)
+## 🧩 Descripción general
+
+El proyecto implementa un **servicio backend en Express** con endpoints dedicados para la conversión de números.  
+Incluye además una **página de inicio** con instrucciones y ejemplos interactivos.  
+Fue diseñado bajo buenas prácticas REST, e incluye **manejo de errores, validaciones, y respuestas HTTP adecuadas**.
+
+Los endpoints disponibles son:
+
+| Método | Ruta | Descripción |
+|:--------:|:-----|:------------|
+| `GET` | `/` | Página principal con enlaces a las rutas de conversión |
+| `GET` | `/r2a?roman=XX` | Convierte un número romano a arábigo |
+| `GET` | `/a2r?arabic=20` | Convierte un número arábigo a romano |
+| `GET` | `/health` | Verifica el estado del servicio |
+
+Ejemplo de uso:
+https://numeros-romanos-ange1809.vercel.app/r2a?roman=XXIV
+→ { "arabic": 24 }
+
+
+---
+
+## ⚙️ Tecnologías utilizadas
+
+- **Node.js v18+**
+- **Express.js**
+- **Jest** (para pruebas unitarias)
+- **Supertest** (para testear endpoints)
+- **Vercel** (para despliegue serverless)
+
+---
+
+## 🧠 Mejoras implementadas
+
+- Se reestructuró el proyecto para que el archivo principal `romanos.js` se ubique en la raíz (no dentro de `/api`).
+- Se corrigieron las validaciones de caracteres inválidos en números romanos.
+- Se añadieron **mensajes informativos** cuando las rutas se acceden sin parámetros (por ejemplo, `/r2a` sin `?roman=`).
+- Se implementó una **página principal** que muestra de forma clara las rutas disponibles y ejemplos de uso.
+- Se configuró un **`vercel.json`** personalizado para asegurar el correcto funcionamiento en entorno serverless.
+- Se corrigió la exportación de la aplicación Express (`module.exports = (req, res) => app(req, res);`) para compatibilidad total con Vercel.
+- Se validó el despliegue continuo y la ejecución correcta de los endpoints en la nube.
+
+---
+
+## 🧩 Requisitos previos
+
+- Tener instalado **Node.js 18 o superior**.
+- Tener una cuenta en **Vercel** (para despliegue).
+- Tener permisos de administrador sobre el repositorio en GitHub (si se usa integración con GitHub Actions).
+
+---
+
+## 💻 Instalación local
+
+1. Clonar el repositorio:
+   ```bash
+   git clone <url-del-repositorio>
+   cd numeros-romanos-Ange1809
+Instalar dependencias:
+
+npm install
+
+
+2.Ejecutar el servidor localmente:
+
+npm start
+
+
+3. Probar los endpoints:
+
+http://localhost:3000/r2a?roman=X
+
+http://localhost:3000/a2r?arabic=10
+
+http://localhost:3000/health
+Despliegue en Vercel
+
+Cada push a la rama principal (main) puede disparar un despliegue automático en Vercel mediante la CLI.
+
+Pasos para configurar el despliegue manual
+
+Instalar y autenticar Vercel
+
+npm install -g vercel
+vercel login
 vercel link
-```
-El comando `vercel link` crea la carpeta `.vercel/` (no la subas al repositorio) con el archivo `project.json` que contiene `orgId` y `projectId`.
 
-### 2. Crear un token de acceso
-Genera un token permanente con `vercel tokens create tateti-ci` o desde el dashboard (Account Settings > Tokens). 
-Yo lo creé con scope completo, y sin expirar. Lo guardé en un archivo .private que no se sube al git
-Guarda el valor; solo se muestra una vez.
 
-### 3. Configurar *GitHub Secrets*
-En GitHub entra a **Settings > Secrets and variables > Actions** y agrega los siguientes secretos:
-- `VERCEL_TOKEN`: el token generado en el paso anterior.
-- `VERCEL_ORG_ID`: valor `orgId` del archivo `.vercel/project.json`.
-- `VERCEL_PROJECT_ID`: valor `projectId` del archivo `.vercel/project.json`.
+Configurar el archivo vercel.json
 
-Si tu aplicacion necesita variables de entorno, definalas en Vercel (`vercel env add` o desde el dashboard) o agrega pasos adicionales en el workflow.
+{
+  "version": 2,
+  "builds": [{ "src": "romanos.js", "use": "@vercel/node" }],
+  "routes": [{ "src": "/(.*)", "dest": "romanos.js" }]
+}
 
-### 4. Disparar el workflow a mano (no debería hacer falta con GitHub Actions)
-Con los secretos configurados, haz *push* a `main`. GitHub Actions ejecuta:
-1. `npm ci`
-2. `npm test`
-3. `npx vercel pull --yes --environment=production`
-4. `npx vercel build --prod`
-5. `npx vercel deploy --prebuilt --prod`
 
-Al finalizar vas a ver la URL de despliegue en la pestana **Actions** del repositorio y en el dashboard de Vercel.
+Desplegar
 
-## Personalizacion
-- Para desplegar desde otra rama, cambia la seccion `on.push.branches` del workflow.
-- Si deseas saltar las pruebas antes de desplegar, elimina el paso "Run tests" en el YAML.
+vercel --prod
 
-## Scripts utiles
-- `npm start`: inicia el servidor.
-- `npm test`: ejecuta Jest.
+
+Una vez finalizado, el sistema mostrará la URL pública del proyecto (en este caso, la final fue:
+👉 https://numeros-romanos-ange1809.vercel.app
+).
+
+🧪 Pruebas unitarias
+
+Las pruebas se ejecutan con Jest y cubren los casos principales:
+
+Conversión correcta de romanos a arábigos.
+
+Conversión correcta de arábigos a romanos.
+
+Manejo de errores para entradas inválidas o fuera de rango.
+
+Para ejecutarlas:
+
+npm test
+
+🧾 Scripts útiles
+Comando	Descripción
+npm start	Inicia el servidor local.
+npm test	Ejecuta las pruebas con Jest.
+vercel --prod	Despliega la aplicación en producción.
+🧠 Conclusión
+
+Este trabajo implementa un servicio backend funcional, validado y desplegado correctamente en Vercel, cumpliendo con todos los requisitos técnicos del proyecto final.
