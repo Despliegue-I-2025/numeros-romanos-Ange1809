@@ -74,7 +74,8 @@ npm install
  ```
 
 2.Ejecutar el servidor localmente:
-   ```npm start
+
+```npm start
 
  ```
 3. Probar los endpoints:
