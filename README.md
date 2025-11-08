@@ -74,8 +74,7 @@ npm install
 
 
 2.Ejecutar el servidor localmente:
-
-npm start
+   ```npm start
 
 
 3. Probar los endpoints:
@@ -85,7 +84,9 @@ http://localhost:3000/r2a?roman=X
 http://localhost:3000/a2r?arabic=10
 
 http://localhost:3000/health
-Despliegue en Vercel
+
+
+# Despliegue en Vercel
 
 Cada push a la rama principal (main) puede disparar un despliegue automático en Vercel mediante la CLI.
 
