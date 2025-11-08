@@ -142,8 +142,8 @@ app.use('*', (req, res) => {
     res.status(404).json({ error: 'Endpoint no encontrado.' });
 });
 
-// Iniciar servidor local
-if (require.main === module) {
+// Solo iniciar servidor localmente (no en Vercel)
+if (process.env.VERCEL === undefined) {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => console.log(`Servidor escuchando en puerto ${PORT}`));
 }
