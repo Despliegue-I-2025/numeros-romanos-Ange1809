@@ -38,19 +38,38 @@ function arabicToRoman(arabic) {
 }
 
 // =================================================================
-// ENDPOINTS
+// html interfaz
 // =================================================================
 app.get('/', (req, res) => {
   res.send(`
-    <html><head><meta charset="utf-8" /><title>Conversor Romano ↔ Arábigo</title></head>
-    <body style="font-family:sans-serif;text-align:center;padding:40px;">
-      <h2>Conversor Romano ↔ Arábigo</h2>
-      <a href="/r2a">Romano → Arábigo</a> |
-      <a href="/a2r">Arábigo → Romano</a>
-      <p>Ejemplo: /r2a?roman=XX o /a2r?arabic=20</p>
-    </body></html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>Conversor Romano ↔ Arábigo</title>
+      </head>
+      <body style="font-family:sans-serif;text-align:center;padding:40px;">
+        <h2>Conversor Romano ↔ Arábigo</h2>
+
+        <h3>Romano → Arábigo</h3>
+        <form action="/r2a" method="get" style="margin-bottom:20px;">
+          <input type="text" name="roman" placeholder="Ej: XXIV" required />
+          <button type="submit">Convertir</button>
+        </form>
+
+        <h3>Arábigo → Romano</h3>
+        <form action="/a2r" method="get">
+          <input type="number" name="arabic" placeholder="Ej: 2024" required min="1" max="3999" />
+          <button type="submit">Convertir</button>
+        </form>
+
+        <p style="margin-top:30px;">Rango válido: 1 a 3999</p>
+        <p>También puedes usar las rutas manualmente:<br>
+        <code>/r2a?roman=XXIV</code> o <code>/a2r?arabic=2024</code></p>
+      </body>
+    </html>
   `);
 });
+
 
 app.get('/r2a', (req, res) => {
   const roman = req.query.roman ? req.query.roman.toUpperCase() : null;
