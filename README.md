@@ -64,22 +64,24 @@ https://numeros-romanos-ange1809.vercel.app/r2a?roman=XXIV
 
 ## 💻 Instalación local
 
-1. Clonar el repositorio:
-   ```bash
+# 1. Clonar el repositorio:
+```
    git clone <url-del-repositorio>
    cd numeros-romanos-Ange1809
+```
 # Instalar dependencias:
+
  ```
 npm install
  ```
 
-2.Ejecutar el servidor localmente:
+# 2.Ejecutar el servidor localmente:
 
 ```
 npm start
 
  ```
-3. Probar los endpoints:
+# 3. Probar los endpoints:
 
 http://localhost:3000/r2a?roman=X
 
@@ -94,14 +96,14 @@ Cada push a la rama principal (main) puede disparar un despliegue automático en
 
 Pasos para configurar el despliegue manual
 
-Instalar y autenticar Vercel
+# Instalar y autenticar Vercel
 
  ```npm install -g vercel
 vercel login
 vercel link
  ```
 
-Configurar el archivo vercel.json
+# Configurar el archivo vercel.json
 
  ```
  {
