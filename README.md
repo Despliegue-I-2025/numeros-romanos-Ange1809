@@ -69,14 +69,14 @@ https://numeros-romanos-ange1809.vercel.app/r2a?roman=XXIV
    git clone <url-del-repositorio>
    cd numeros-romanos-Ange1809
 Instalar dependencias:
-
+ ```
 npm install
 
 
 2.Ejecutar el servidor localmente:
    ```npm start
 
-
+ ```
 3. Probar los endpoints:
 
 http://localhost:3000/r2a?roman=X
