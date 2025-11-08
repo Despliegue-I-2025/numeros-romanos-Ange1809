@@ -6,7 +6,6 @@ const app = express();
 // =================================================================
 
 function romanToArabic(roman) {
-    // Implementación de lógica, corregida para ser más robusta
     if (!/^[IVXLCDM]+$/i.test(roman)) {
         return null; // Caracteres inválidos
     }
@@ -22,9 +21,8 @@ function romanToArabic(roman) {
             arabic += current;
         }
     }
-    // Añadir una validación básica de la estructura del número romano (aunque los tests fallarían si es estricta)
+    // Limite máximo 3999
     if (arabic > 3999) return null; 
-
     return arabic;
 }
 
@@ -63,15 +61,47 @@ function arabicToRoman(arabic) {
 // ENDPOINTS
 // =================================================================
 
+// Página de inicio: muestra las rutas disponibles
+app.get('/', (req, res) => {
+    res.send(`
+        <html>
+            <head>
+                <title>Conversor Romano ↔ Arábigo</title>
+                <style>
+                    body { font-family: Arial, sans-serif; background: #f5f5f5; text-align: center; padding: 50px; }
+                    h1 { color: #333; }
+                    a { display: inline-block; margin: 10px; padding: 10px 20px; background: #007BFF; color: white; text-decoration: none; border-radius: 8px; }
+                    a:hover { background: #0056b3; }
+                    p { color: #444; }
+                </style>
+            </head>
+            <body>
+                <h1>Conversor de Números Romanos ↔ Arábigos</h1>
+                <p>Selecciona qué conversión deseas realizar:</p>
+                <a href="/r2a">Romano → Arábigo</a>
+                <a href="/a2r">Arábigo → Romano</a>
+                <p>Por ejemplo: <code>/r2a?roman=XXIV</code> o <code>/a2r?arabic=24</code></p>
+            </body>
+        </html>
+    `);
+});
+
 // Romanos a Arabigos
 app.get('/r2a', (req, res) => {
     const roman = req.query.roman ? req.query.roman.toUpperCase() : null;
+
+    // Mostrar ayuda si no se pasa el parámetro
     if (!roman) {
-        return res.status(400).json({ error: 'Parametro roman requerido.' });
+        return res.send(`
+            <h2>Conversor Romano → Arábigo</h2>
+            <p>Convierte números romanos a arábigos.</p>
+            <p><b>Uso:</b> /r2a?roman=XXIV</p>
+            <p>Ejemplo: <a href="/r2a?roman=XXIV">/r2a?roman=XXIV</a></p>
+            <a href="/">⬅ Volver al inicio</a>
+        `);
     }
 
     const arabic = romanToArabic(roman);
-    // Nota: El test espera 'Numero romano invalido.'
     if (arabic === null) {
         return res.status(400).json({ error: 'Numero romano invalido.' });
     }
@@ -82,13 +112,19 @@ app.get('/r2a', (req, res) => {
 // Arabigos a Romanos
 app.get('/a2r', (req, res) => {
     const arabic = parseInt(req.query.arabic, 10);
-    // El test espera 'Parametro arabic requerido.'
+
+    // Mostrar ayuda si no se pasa el parámetro
     if (isNaN(arabic)) {
-        return res.status(400).json({ error: 'Parametro arabic requerido.' });
+        return res.send(`
+            <h2>Conversor Arábigo → Romano</h2>
+            <p>Convierte números arábigos a romanos (1 a 3999).</p>
+            <p><b>Uso:</b> /a2r?arabic=10</p>
+            <p>Ejemplo: <a href="/a2r?arabic=10">/a2r?arabic=10</a></p>
+            <a href="/">⬅ Volver al inicio</a>
+        `);
     }
 
     const roman = arabicToRoman(arabic);
-    // El test espera 'Numero arabico invalido (debe ser entre 1 y 3999).'
     if (roman === null) {
         return res.status(400).json({ error: 'Numero arabico invalido (debe ser entre 1 y 3999).' });
     }
@@ -106,6 +142,11 @@ app.use('*', (req, res) => {
     res.status(404).json({ error: 'Endpoint no encontrado.' });
 });
 
+// Iniciar servidor local
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => console.log(`Servidor escuchando en puerto ${PORT}`));
+}
 
-// Exportamos 'app' y las funciones unitarias para los tests y el index.js
+// Exportar para tests y vercel
 module.exports = { app, romanToArabic, arabicToRoman };
