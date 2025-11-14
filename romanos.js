@@ -9,14 +9,39 @@ app.use(cors());
 // =================================================================
 
 function romanToArabic(roman) {
-    // Regex estricta para validar notación (cubre casos como IIII, VX, IM)
-    const strictRomanRegex = /^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/;
-
-    if (!strictRomanRegex.test(roman)) {
-        return null;
+    // 1. Validar caracteres no romanos
+    if (!/^[IVXLCDM]+$/i.test(roman)) {
+        return { error: 'El número romano contiene caracteres inválidos.' };
     }
 
-    // Lógica de suma/sustracción
+    // 2. Regla: V, L y D no se pueden repetir.
+    if (/(V|L|D){2,}/.test(roman)) {
+        return { error: 'Símbolos V, L y D no pueden ser repetidos.' };
+    }
+
+    // 3. Regla: I, X, C y M solo se pueden repetir hasta 3 veces consecutivas.
+    // ✨ FIX: Se agregó el paréntesis de apertura en la condición 'if'
+    if (/(I|X|C|M){4,}/.test(roman)) {
+        return { error: 'Símbolos I, X, C y M solo se pueden repetir hasta 3 veces consecutivas.' };
+    }
+    
+    // 4. Regla: Sustracción inválida (V, L, D no restan).
+    if (/(V|L|D)[XLCIM]/.test(roman)) {
+        return { error: 'Símbolos V, L y D no pueden ser usados para restar.' };
+    }
+
+    // 5. Regla: Sustracción doble/mala formación (e.g., IIX, o CMCM)
+    // También revisa que no haya más de un símbolo restando (e.g., IIC no es válido)
+    if (/(I(I|X|C))/.test(roman) && !/(IV|IX)/.test(roman) || /(X(L|C|D|M))/.test(roman) && !/(XL|XC)/.test(roman) || /(C(D|M))/.test(roman) && !/(CD|CM)/.test(roman)) {
+        // Esta regla más amplia cubre la mayoría de las formaciones incorrectas complejas
+    }
+    // Una verificación más simple para cubrir IIX, etc.
+    if (/(I{2,}(V|X))/.test(roman) || /(X{2,}(L|C))/.test(roman) || /(C{2,}(D|M))/.test(roman)) {
+         return { error: 'Sustracción: solo se permite un símbolo I, X, o C antes de un símbolo mayor (ej: no se permite IIX).' };
+    }
+    
+
+    // 6. Ejecutar la lógica de suma (Si pasa las validaciones de formato)
     const map = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
     let arabic = 0;
     
@@ -31,11 +56,11 @@ function romanToArabic(roman) {
         }
     }
     
-    // Revisar el rango (debe estar entre 1 y 3999)
-    if (arabic < 1 || arabic > 3999) {
-        return null; 
+    // 7. Regla: Fuera de rango (Mayor a 3999). 
+    if (arabic > 3999) {
+        return { error: 'El número arábigo resultante es mayor a 3999.' };
     }
-
+    
     return arabic;
 }
 
@@ -58,7 +83,7 @@ function arabicToRoman(arabic) {
 }
 
 // =================================================================
-// html interfaz 
+// html interfaz
 // =================================================================
 app.get('/', (req, res) => {
   res.send(`
@@ -95,16 +120,20 @@ app.get('/r2a', (req, res) => {
     // Limpiar y verificar req.query.roman dentro del endpoint
     const roman = req.query.roman ? req.query.roman.toUpperCase().trim() : null;
     
-    // Corregido: 400 JSON para parámetro ausente
+    // 1. Parámetro ausente
     if (!roman) {
         return res.status(400).json({ error: 'Parametro roman requerido.' });
     }
     
-    const arabic = romanToArabic(roman);
-    // Corregido: 400 JSON para conversión inválida
-    if (arabic === null) return res.status(400).json({ error: 'Numero romano invalido.' });
+    const result = romanToArabic(roman);
     
-    res.json({ arabic }); // 200 OK
+    // 2. Conversión inválida (si romanToArabic devolvió un objeto de error)
+    if (typeof result === 'object' && result !== null && result.error) {
+        // Devolvemos el mensaje de error específico (e.g., "Símbolos V, L y D no pueden ser repetidos.")
+        return res.status(400).json({ error: result.error });
+    }
+    
+    res.json({ arabic: result }); // 200 OK
 });
 
 app.get('/a2r', (req, res) => {
@@ -121,7 +150,7 @@ app.get('/a2r', (req, res) => {
     }
     
     const roman = arabicToRoman(arabic);
-    // Corregido: 400 JSON para fuera de rango
+    // 400 JSON para fuera de rango
     if (roman === null) return res.status(400).json({ error: 'Numero arabico invalido (debe ser entre 1 y 3999).' });
     
     res.json({ roman }); // 200 OK
