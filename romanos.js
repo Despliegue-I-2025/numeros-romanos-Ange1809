@@ -65,21 +65,37 @@ function romanToArabic(roman) {
 }
 
 function arabicToRoman(arabic) {
-  if (arabic < 1 || arabic > 3999 || !Number.isInteger(arabic)) return null;
-  const numerals = [
-    { v: 1000, s: 'M' }, { v: 900, s: 'CM' }, { v: 500, s: 'D' },
-    { v: 400, s: 'CD' }, { v: 100, s: 'C' }, { v: 90, s: 'XC' },
-    { v: 50, s: 'L' }, { v: 40, s: 'XL' }, { v: 10, s: 'X' },
-    { v: 9, s: 'IX' }, { v: 5, s: 'V' }, { v: 4, s: 'IV' }, { v: 1, s: 'I' }
-  ];
-  let roman = '';
-  for (const { v, s } of numerals) {
-    while (arabic >= v) {
-      roman += s;
-      arabic -= v;
-    }
-  }
-  return roman;
+    // 1. Caso Borde: No es un número entero
+    if (!Number.isInteger(arabic)) {
+        // Aunque parseInt lo maneja, esta es la validación estricta
+        return { error: 'El valor debe ser un número entero.' };
+    }
+    
+    // 2. Caso Borde: Número es cero o negativo
+    if (arabic < 1) {
+        return { error: 'El número arábigo es inválido. Los números romanos comienzan en 1.' };
+    }
+    
+    // 3. Caso Borde: Número fuera de rango (máximo 3999)
+    if (arabic > 3999) {
+        return { error: 'El número arábigo es inválido. Los números romanos solo llegan hasta 3999.' };
+    }
+    
+    // Si la entrada es válida (entre 1 y 3999 y es entero), procede con la conversión
+    const numerals = [
+        { v: 1000, s: 'M' }, { v: 900, s: 'CM' }, { v: 500, s: 'D' },
+        { v: 400, s: 'CD' }, { v: 100, s: 'C' }, { v: 90, s: 'XC' },
+        { v: 50, s: 'L' }, { v: 40, s: 'XL' }, { v: 10, s: 'X' },
+        { v: 9, s: 'IX' }, { v: 5, s: 'V' }, { v: 4, s: 'IV' }, { v: 1, s: 'I' }
+    ];
+    let roman = '';
+    for (const { v, s } of numerals) {
+        while (arabic >= v) {
+              roman += s;
+              arabic -= v;
+        }
+    }
+    return roman;
 }
 
 // =================================================================
@@ -139,21 +155,27 @@ app.get('/r2a', (req, res) => {
 app.get('/a2r', (req, res) => {
     const arabicQuery = req.query.arabic;
     
+    // 1. Error: Parámetro ausente
     if (!arabicQuery) {
         return res.status(400).json({ error: 'Parametro arabic requerido.' });
     }
     
-    const arabic = parseInt(arabicQuery, 10);
+    const arabic = parseInt(arabicQuery, 10);
     
+    // 2. Error: Input no numérico (parseInt devuelve NaN, pero el requisito pide un error de parámetro)
     if (isNaN(arabic)) {
-        return res.status(400).json({ error: 'Parametro arabic requerido.' });
+        return res.status(400).json({ error: 'Parametro arabic requerido: el valor no es un número válido.' });
     }
     
-    const roman = arabicToRoman(arabic);
-    // 400 JSON para fuera de rango
-    if (roman === null) return res.status(400).json({ error: 'Numero arabico invalido (debe ser entre 1 y 3999).' });
+    const result = arabicToRoman(arabic);
+
+    // 3. Error: Conversión inválida (si arabicToRoman devolvió un objeto de error)
+    if (typeof result === 'object' && result !== null && result.error) {
+        // Devolvemos el mensaje de error específico
+        return res.status(400).json({ error: result.error });
+    }
     
-    res.json({ roman }); // 200 OK
+    res.json({ roman: result }); // 200 OK
 });
 
 app.get('/health', (req, res) => {
