@@ -2,9 +2,9 @@
   "name": "numeros-romanos",
   "version": "1.0.0",
   "description": "Conversor de números arábigos a romanos y viceversa.",
-  "main": "api/index.js",
+  "main": "romanos.js",
   "scripts": {
-    "start": "node api/romanos.js",
+    "start": "node romanos.js",
     "test": "jest"
   },
   "dependencies": {
