@@ -8,18 +8,38 @@ app.use(cors());
 // LÓGICA DE CONVERSIÓN
 // =================================================================
 function romanToArabic(roman) {
-  if (!/^[IVXLCDM]+$/i.test(roman)) return null;
-  const map = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
-  let arabic = 0;
-  for (let i = 0; i < roman.length; i++) {
-    const current = map[roman[i]];
-    const next = map[roman[i + 1]];
-    if (next > current) {
-      arabic += next - current;
-      i++;
-    } else arabic += current;
-  }
-  return arabic < 1 || arabic > 3999 ? null : arabic;
+    // 1. Validar la estructura estricta del número romano:
+    // Esta regex asegura:
+    // - Máximo 3 repeticiones de I, X, C, M.
+    // - Prohíbe la repetición de V, L, D.
+    // - Prohíbe sustracciones inválidas (como IM, X D, etc.).
+    const strictRomanRegex = /^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/;
+
+    if (!strictRomanRegex.test(roman)) {
+        return null;
+    }
+
+    // 2. Ejecutar la lógica de suma
+    const map = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+    let arabic = 0;
+    
+    for (let i = 0; i < roman.length; i++) {
+        const current = map[roman[i]];
+        const next = map[roman[i + 1]];
+        if (next > current) {
+            arabic += next - current;
+            i++;
+        } else {
+            arabic += current;
+        }
+    }
+    
+    // 3. Revisar si el resultado final está fuera de rango (aunque la regex lo limita a 3999)
+    if (arabic < 1 || arabic > 3999) {
+        return null; 
+    }
+
+    return arabic;
 }
 
 function arabicToRoman(arabic) {
