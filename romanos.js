@@ -14,6 +14,7 @@ function romanToArabic(roman) {
     // - Prohíbe la repetición de V, L, D.
     // - Prohíbe sustracciones inválidas (como IM, X D, etc.).
     const strictRomanRegex = /^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/;
+    const roman = req.query.roman ? req.query.roman.toUpperCase().trim() : null;
 
     if (!strictRomanRegex.test(roman)) {
         return null;
